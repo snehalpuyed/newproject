@@ -57,20 +57,14 @@ router.post("/authlogin", async (req, res) => {
       return res.status(400).json({ msg: "Invalid credentials" });
     }
 
-    // Send user info back (except password)
+    // Send only ID
     res.status(200).json({
       msg: "Login successful",
-      user: {
-        name: user.name || "",
-        email: user.email,
-        contact: user.contact || "",
-        city: user.city || ""
-      }
+      id: user._id
     });
 
-  } catch (err) {
-    console.error("❌ Login error:", err);
-    res.status(500).json({ msg: "Server error" });
+  } catch (error) {
+    res.status(500).json({ msg: "Server error", error: error.message });
   }
 });
 

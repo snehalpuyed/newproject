@@ -3,32 +3,33 @@ const bcrypt = require("bcrypt");
 const router = express.Router();
 const users = require("../module/User");
 
-// ✅ REGISTER ROUTE
 router.post("/authregister", async (req, res) => {
-  const { name, email, password, contact, city } = req.body;
+  const { name, email, password, contact, city, state } = req.body;
 
   try {
-    // Check if user already exists
+    // 🔍 Check if user already exists
     const existingUser = await users.findOne({ email });
-
     if (existingUser) {
       return res.status(400).json({ msg: "User already exists" });
     }
 
-    // Hash the password
+    // 🔐 Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create and save the user
+    // 🧾 Create new user document
     const newUser = new users({
       name,
       email,
       password: hashedPassword,
       contact,
       city,
+      state
     });
 
+    // 💾 Save to MongoDB
     await newUser.save();
 
+    // ✅ Success response
     res.status(201).json({ msg: "User registered successfully" });
 
   } catch (err) {
@@ -36,6 +37,7 @@ router.post("/authregister", async (req, res) => {
     res.status(500).json({ msg: "Server error" });
   }
 });
+
 
 
 // ✅ LOGIN ROUTE
@@ -67,5 +69,8 @@ router.post("/authlogin", async (req, res) => {
     res.status(500).json({ msg: "Server error", error: error.message });
   }
 });
+
+
+
 
 module.exports = router;

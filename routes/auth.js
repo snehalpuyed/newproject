@@ -69,6 +69,18 @@ router.post("/authlogin", async (req, res) => {
     res.status(500).json({ msg: "Server error", error: error.message });
   }
 });
+router.get("/authuser/:id", async (req, res) => {
+  try {
+    const user = await users.findById(req.params.id).select("-password");
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found", data: null });
+    }
+    res.json({ success: true, message: "User found", data: user });
+  } catch (err) {
+    res.status(500).json({ success: false, message: "Server error", data: null, error: err.message });
+  }
+});
+
 
 
 

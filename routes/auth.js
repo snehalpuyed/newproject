@@ -69,7 +69,7 @@ router.post("/authlogin", async (req, res) => {
     res.status(500).json({ msg: "Server error", error: error.message });
   }
 });
-router.get("/authuser/:id", async (req, res) => {
+router.get("/user/:id", async (req, res) => {
   try {
     const user = await users.findById(req.params.id).select("-password");
     if (!user) {

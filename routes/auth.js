@@ -58,7 +58,7 @@ router.post("/authlogin", async (req, res) => {
     // Send only ID
     res.status(200).json({
       msg: "Login successful",
-      id: user._id
+      id: user._id,
     });
   } catch (err) {
     console.error("Login error:", err);

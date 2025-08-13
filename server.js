@@ -18,7 +18,7 @@ const userRoutes = require("./routes/userRoute");
 
 app.use("/api/auth", authroutes);
 app.use("/api/upload", videoUploadRoute);
-app.use("/api/users", userRoute);
+app.use("/api/users", userRoutes);
 
 // Test route
 app.get("/", (req, res) => {

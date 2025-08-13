@@ -23,11 +23,10 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 // ✅ 4. Mount Routes (do NOT duplicate the same file)
 const authroutes = require("./routes/auth");
 const videoUploadRoute = require("./routes/uploads");
-const userRoutes = require("./routes/userRoute");
 
 app.use("/api", authroutes);         // register and login
 app.use("/api", videoUploadRoute);   // video uploads
-app.use("/api", userRoutes);         // user route
+
 
 // ✅ 5. Test route
 app.get("/", (req, res) => {

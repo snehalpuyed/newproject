@@ -14,11 +14,11 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 // Routes
 const authroutes = require("./routes/auth");
 const videoUploadRoute = require("./routes/uploads");
-const userRoutes = require("./routes/userRoutes");
+const userRoutes = require("./routes/userRoute");
 
 app.use("/api/auth", authroutes);
 app.use("/api/upload", videoUploadRoute);
-app.use("/api/users", userRoutes);
+app.use("/api/users", userRoute);
 
 // Test route
 app.get("/", (req, res) => {

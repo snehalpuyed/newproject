@@ -12,13 +12,13 @@ app.use(express.json());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Routes
-const authroutes = require("./routes/auth");
+const authRoutes = require("./routes/auth");
 const videoUploadRoute = require("./routes/uploads");
-const userRoutes = require("./routes/userRoute");
+const userRoutes = require("./routes/userRoute"); // ✅ removed extra dot
 
-app.use("/api/auth", authroutes);
-app.use("/api/upload", videoUploadRoute);
-app.use("/api/users", userRoutes);
+app.use("/api", authRoutes);
+app.use("/api", videoUploadRoute);
+app.use("/api", userRoutes);
 
 // Test route
 app.get("/", (req, res) => {

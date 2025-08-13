@@ -1,25 +1,29 @@
-
-// routes/userRoutes.js
 const express = require("express");
+const bcrypt = require("bcrypt");
 const router = express.Router();
-const Users = require("../module/User"); // Your User model
+const Users = require("../module/User"); // ✅ Check folder name
 
-// POST /register → Register a new user (without password hashing)
-router.post("/register", async (req, res) => {
+// =======================
+// REGISTER USER (with password hashing)
+// =======================
+router.post("/userregister", async (req, res) => {
   const { name, email, password, contact, city, state } = req.body;
 
   try {
     // Check if user already exists
     const existingUser = await Users.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ msg: "User already exists" });
+      return res.status(400).json({ success: false, msg: "User already exists" });
     }
 
-    // Create user (password saved as plain text)
+    // Hash password before saving
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create new user
     const newUser = new Users({
       name,
       email,
-      password, // plain text
+      password: hashedPassword,
       contact,
       city,
       state
@@ -27,24 +31,30 @@ router.post("/register", async (req, res) => {
 
     await newUser.save();
 
-    res.status(201).json({ msg: "User registered successfully", id: newUser._id });
+    res.status(201).json({
+      success: true,
+      msg: "User registered successfully",
+      id: newUser._id
+    });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ msg: "Server error", error: err.message });
+    console.error("User registration error:", err);
+    res.status(500).json({ success: false, msg: "Server error", error: err.message });
   }
 });
 
-// GET /user/:id → Get user data
+// =======================
+// GET USER BY ID
+// =======================
 router.get("/user/:id", async (req, res) => {
   try {
     const user = await Users.findById(req.params.id).select("-password"); // Exclude password
     if (!user) {
-      return res.status(404).json({ msg: "User not found" });
+      return res.status(404).json({ success: false, msg: "User not found" });
     }
-    res.json(user);
+    res.json({ success: true, data: user });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ msg: "Server error", error: err.message });
+    console.error("Get user error:", err);
+    res.status(500).json({ success: false, msg: "Server error", error: err.message });
   }
 });
 

@@ -73,7 +73,7 @@ router.post("/authlogin", async (req, res) => {
 // =======================
 // GET USER BY ID
 // =======================
-router.get("/authuser/:id", async (req, res) => {
+router.post("/authuser/:id", async (req, res) => {
   try {
     const user = await Users.findById(req.params.id).select("-password"); // Exclude password
     if (!user) {

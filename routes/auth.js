@@ -1,5 +1,6 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
+const mongoose = require("mongoose");
 const router = express.Router();
 const Users = require("../module/User"); // ✅ Check folder name, might be "models/User"
 
@@ -16,14 +17,11 @@ router.post("/authregister", async (req, res) => {
       return res.status(400).json({ success: false, msg: "User already exists" });
     }
 
-    // Hash password
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Create new user
+    // New user object (password yaha plain ayega)
     const newUser = new Users({
       name,
       email,
-      password: hashedPassword,
+      password,   // 👈 yaha plain hi store karo, schema automatically bcrypt karega
       contact,
       city,
       state
@@ -41,7 +39,6 @@ router.post("/authregister", async (req, res) => {
     res.status(500).json({ success: false, msg: "Server error", error: err.message });
   }
 });
-
 // =======================
 // LOGIN ROUTE
 // =======================
@@ -49,16 +46,19 @@ router.post("/authlogin", async (req, res) => {
   const { email, password } = req.body;
 
   try {
+    // 1. Email check
     const user = await Users.findOne({ email });
     if (!user) {
       return res.status(400).json({ success: false, msg: "User not found" });
     }
 
+    // 2. Compare plain password with hashed password stored in DB
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(400).json({ success: false, msg: "Invalid credentials" });
     }
 
+    // 3. Successful login response
     res.status(200).json({
       success: true,
       msg: "Login successful",
@@ -70,20 +70,27 @@ router.post("/authlogin", async (req, res) => {
   }
 });
 
-// =======================
-// GET USER BY ID
-// =======================
-router.post("/authuser/:id", async (req, res) => {
+
+router.get("/authuser/:id", async (req, res) => {
   try {
-    const user = await Users.findById(req.params.id).select("-password"); // Exclude password
+    // 🔹 Agar galat ObjectId bhej diya to error handle karo
+    if (!mongoose.isValidObjectId(req.params.id)) {
+      return res.status(400).json({ success: false, msg: "Invalid user ID format" });
+    }
+
+    // 🔹 Password aur _id exclude karo
+    const user = await Users.findById(req.params.id).select("-password -_id");
+
     if (!user) {
       return res.status(404).json({ success: false, msg: "User not found" });
     }
+
     res.json({ success: true, data: user });
   } catch (err) {
     console.error("Get user error:", err);
     res.status(500).json({ success: false, msg: "Server error", error: err.message });
   }
 });
+
 
 module.exports = router;

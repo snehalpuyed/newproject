@@ -91,6 +91,23 @@ router.get("/authuser/:id", async (req, res) => {
     res.status(500).json({ success: false, msg: "Server error", error: err.message });
   }
 });
+// =======================
+// LOGOUT ROUTE
+// =======================
+router.post("/authlogout", (req, res) => {
+  try {
+    // Agar JWT use karte hote to yaha token blacklist karna padta
+    // Abhi ke liye sirf response bhejte hain
+    res.status(200).json({
+      success: true,
+      msg: "Logout successful"
+    });
+  } catch (err) {
+    console.error("Logout error:", err);
+    res.status(500).json({ success: false, msg: "Server error", error: err.message });
+  }
+});
+
 
 
 module.exports = router;

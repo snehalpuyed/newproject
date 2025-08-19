@@ -20,7 +20,7 @@ const userSchema = new mongoose.Schema({
   },
   contact: {
     type: Number,
-    required: true
+    
   },
   city: {
     type: String,
